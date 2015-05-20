@@ -61,6 +61,7 @@ var (
 	procSetPixelFormat            = modgdi32.NewProc("SetPixelFormat")
 	procSwapBuffers               = modgdi32.NewProc("SwapBuffers")
 	procCreateCompatibleBitmap    = modgdi32.NewProc("CreateCompatibleBitmap")
+	procGetDIBits                 = modgdi32.NewProc("GetDIBits")
 )
 
 func GetDeviceCaps(hdc HDC, index int) int {
@@ -531,4 +532,18 @@ func CreateCompatibleBitmap(hdc HDC, width int, height int) HBITMAP {
 		uintptr(height),
 	)
 	return HBITMAP(ret)
+}
+
+func GetDIBits(hdc HDC, hbmp HBITMAP, startScan, scanLines uint,
+	bits unsafe.Pointer, bi unsafe.Pointer, usage uint) int {
+	ret, _, _ := procGetDIBits.Call(
+		uintptr(hdc),
+		uintptr(hbmp),
+		uintptr(startScan),
+		uintptr(scanLines),
+		uintptr(bits),
+		uintptr(bi),
+		uintptr(usage),
+	)
+	return int(ret)
 }
