@@ -115,6 +115,8 @@ var (
 	procSetWindowsHookEx              = moduser32.NewProc("SetWindowsHookExW")
 	procUnhookWindowsHookEx           = moduser32.NewProc("UnhookWindowsHookEx")
 	procCallNextHookEx                = moduser32.NewProc("CallNextHookEx")
+	procGetTopWindow                  = moduser32.NewProc("GetTopWindow")
+	procGetWindow                     = moduser32.NewProc("GetWindow")
 )
 
 func RegisterClassEx(wndClassEx *WNDCLASSEX) ATOM {
@@ -976,4 +978,19 @@ func CallNextHookEx(hhk HHOOK, nCode int, wParam WPARAM, lParam LPARAM) LRESULT 
 		uintptr(lParam),
 	)
 	return LRESULT(ret)
+}
+
+func GetTopWindow(hWnd HWND) HWND {
+	ret, _, _ := procGetTopWindow.Call(
+		uintptr(hWnd),
+	)
+	return HWND(ret)
+}
+
+func GetWindow(hWnd HWND, uCmd uint) HWND {
+	ret, _, _ := procGetWindow.Call(
+		uintptr(hWnd),
+		uintptr(uCmd),
+	)
+	return HWND(ret)
 }
