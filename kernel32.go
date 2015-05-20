@@ -43,6 +43,7 @@ var (
 	procGetProcessTimes            = modkernel32.NewProc("GetProcessTimes")
 	procSetSystemTime              = modkernel32.NewProc("SetSystemTime")
 	procGetSystemTime              = modkernel32.NewProc("GetSystemTime")
+	procCreateProcess              = modkernel32.NewProc("CreateProcessW")
 )
 
 func GetModuleHandle(modulename string) HINSTANCE {
@@ -310,4 +311,26 @@ func SetSystemTime(time *SYSTEMTIME) bool {
 	ret, _, _ := procSetSystemTime.Call(
 		uintptr(unsafe.Pointer(time)))
 	return ret != 0
+}
+
+func CreateProcess(appName, commandLine string, creationFlags uint,
+	currentDirectory string) *PROCESS_INFORMATION {
+	result := &PROCESS_INFORMATION{}
+	ret, _, _ := procCreateProcess.Call(
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(appName))),
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(commandLine))),
+		uintptr(0),
+		uintptr(0),
+		uintptr(0),
+		uintptr(creationFlags),
+		uintptr(0),
+		uintptr(unsafe.Pointer(syscall.StringToUTF16Ptr(currentDirectory))),
+		uintptr(0),
+		uintptr(unsafe.Pointer(result)),
+	)
+	if ret != uintptr(0) {
+		return result
+	} else {
+		return nil
+	}
 }

@@ -916,3 +916,10 @@ type KBDLLHOOKSTRUCT struct {
 }
 
 type HOOKPROC func(int, WPARAM, LPARAM) LRESULT
+
+type PROCESS_INFORMATION struct {
+	Process   HANDLE
+	Thread    HANDLE
+	ProcessId DWORD
+	ThreadId  DWORD
+}
